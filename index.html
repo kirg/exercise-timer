@@ -242,7 +242,7 @@ const LIB=[
   // Mobility / World's Greatest
   "World's Greatest Stretch","World's Greatest Stretch - Left","World's Greatest Stretch - Right",'Hamstring Stretch','Hip Flexor Stretch','90/90 Hip Switch',
   // Dumbbell Basics
-  'DB Bench Press','DB Bent-Over Row','DB Shoulder Press','DB Goblet Squat','DB Romanian Deadlift','DB Bicep Curl','DB Triceps Kickback','DB Lateral Raise','DB Chest Fly','DB Hammer Curl','DB Renegade Row','DB Farmers Carry',
+  'DB Bench Press','DB Bent-Over Row','DB Shoulder Press','DB Goblet Squat','DB Romanian Deadlift','DB Bicep Curl','DB Triceps Kickback','DB Lateral Raise','DB Chest Fly','DB Hammer Curl','DB Renegade Row','DB Farmers Carry','DB Suitcase Carry - Left','DB Suitcase Carry - Right',
   // Usual suspects (keep)
   'Push-ups','Squats','Burpees','Lunges','Jumping Jacks','Pull-ups','Deadlift','Bench Press','Overhead Press','Bent-over Row','Mountain Climbers','Tricep Dips','Calf Raises','Shoulder Press','Kettlebell Swing','High Knees','Chest Fly','Lateral Raise','Goblet Squat'
 ];
@@ -272,6 +272,51 @@ if(!routines.length){
   ]};
   routines.push(r);saveAll();
 }
+
+// --- Preset routines (seeded once per device; deleting one keeps it deleted) ---
+const K_PRESETS='et_presets_v1';
+function presetEx(baseName,mode,vals,notes){return Object.assign({id:uid(),baseName:baseName,mode:mode,targetReps:10,duration:30,restAfter:20,sets:1,weight:0,skip:false,notes:notes||''},vals);}
+const PRESET_ROUTINES=[
+  {id:'preset-back-daily-v1',name:'Back Strength — Daily Big 3',exercises:[
+    presetEx('Cat-Cow','reps',{targetReps:6,restAfter:10},{}.notes='slow, gentle range — warm-up'),
+    presetEx('McGill Curl-up','time',{duration:60,restAfter:20},{}.notes='6 x 10-sec holds, brief reset between reps. Hands under lower back, lift head/shoulders just off, brace'),
+    presetEx('McGill Curl-up','time',{duration:40,restAfter:20},{}.notes='4 x 10-sec holds, brief reset between reps'),
+    presetEx('McGill Curl-up','time',{duration:20,restAfter:30},{}.notes='2 x 10-sec holds, brief reset between reps'),
+    presetEx('Side Plank - Left','time',{duration:60,restAfter:20},{}.notes='6 x 10-sec holds, from knees to start, brief reset between reps'),
+    presetEx('Side Plank - Left','time',{duration:40,restAfter:20},{}.notes='4 x 10-sec holds'),
+    presetEx('Side Plank - Left','time',{duration:20,restAfter:20},{}.notes='2 x 10-sec holds'),
+    presetEx('Side Plank - Right','time',{duration:60,restAfter:20},{}.notes='6 x 10-sec holds, from knees to start, brief reset between reps'),
+    presetEx('Side Plank - Right','time',{duration:40,restAfter:20},{}.notes='4 x 10-sec holds'),
+    presetEx('Side Plank - Right','time',{duration:20,restAfter:30},{}.notes='2 x 10-sec holds'),
+    presetEx('Bird Dog','time',{duration:60,restAfter:20},{}.notes='6 x 10-sec holds, alternate sides each rep, no hip sway'),
+    presetEx('Bird Dog','time',{duration:40,restAfter:20},{}.notes='4 x 10-sec holds, alternate sides'),
+    presetEx('Bird Dog','time',{duration:20,restAfter:30},{}.notes='2 x 10-sec holds, alternate sides'),
+    presetEx('Glute Bridge','reps',{targetReps:10,sets:2,restAfter:30},{}.notes='2-sec squeeze at the top. Finish with a 10-min walk if you can'),
+  ]},
+  {id:'preset-back-strength-v1',name:'Back Strength — Hinge & Carry (3x/week)',exercises:[
+    presetEx('Cat-Cow','reps',{targetReps:6,restAfter:10},{}.notes='slow, gentle range — warm-up'),
+    presetEx("World's Greatest Stretch - Left",'reps',{targetReps:3,restAfter:10},{}.notes='warm-up'),
+    presetEx("World's Greatest Stretch - Right",'reps',{targetReps:3,restAfter:20},{}.notes='warm-up'),
+    presetEx('DB Goblet Squat','reps',{targetReps:8,sets:3,restAfter:60,weight:8},{}.notes='Start 6-10 kg, effort 6-7/10. Brace before you descend. +1-2 kg when all sets are clean and back feels fine next morning'),
+    presetEx('DB Romanian Deadlift','reps',{targetReps:8,sets:3,restAfter:60,weight:12},{}.notes='One dumbbell in both hands 10-12 kg (or 5-8 kg each hand). Hips back, flat back, stop at hamstring stretch — do not chase the floor'),
+    presetEx('Glute Bridge','reps',{targetReps:10,sets:3,restAfter:45,weight:10},{}.notes='Dumbbell on hips with a cushion (square plates). 2-sec squeeze at the top'),
+    presetEx('DB Suitcase Carry - Left','time',{duration:30,sets:4,restAfter:20,weight:10},{}.notes='Start 8-12 kg. Walk tall, do not lean away from the weight'),
+    presetEx('DB Suitcase Carry - Right','time',{duration:30,sets:4,restAfter:20,weight:10},{}.notes='Start 8-12 kg. Walk tall, do not lean away from the weight'),
+    presetEx('Dead Bug','reps',{targetReps:8,sets:2,restAfter:30},{}.notes='Finisher. Lower back stays pressed to the floor throughout'),
+  ]},
+];
+try{
+  const seenPresets=JSON.parse(localStorage.getItem(K_PRESETS)||'[]');
+  let presetsChanged=false;
+  PRESET_ROUTINES.forEach(p=>{
+    if(seenPresets.includes(p.id)) return;
+    seenPresets.push(p.id);presetsChanged=true;
+    if(!routines.some(r=>r.id===p.id)){
+      routines.push({id:p.id,name:p.name,createdAt:Date.now(),exercises:p.exercises});
+    }
+  });
+  if(presetsChanged){localStorage.setItem(K_PRESETS,JSON.stringify(seenPresets));saveAll();}
+}catch(e){}
 curRoutine=getRoutine(lastRoutineId)||routines[0];
 
 // UI refs

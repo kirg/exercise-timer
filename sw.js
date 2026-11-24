@@ -1,5 +1,5 @@
 // ExTimer Service Worker - offline-first PWA
-const CACHE = 'extimer-v1.4';
+const CACHE = 'extimer-v1.5';
 const CORE = [
   './',
   './index.html',
